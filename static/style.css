@@ -1,0 +1,27 @@
+
+/*.email-message:nth-child(even) {
+  background: #eee;
+}*/
+
+.email-message_preview {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.email-message_preview_content {
+  font-weight: normal;
+  color: #999;
+  margin-left: 20px;
+}
+
+.email-address {
+  display: inline-block;
+  padding: 4px;
+  line-height: 30px;
+}
+
+.email-address_avatar {
+  max-height: 30px;
+  vertical-align: middle;
+  margin-right: 3px;
+}

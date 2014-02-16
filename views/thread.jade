@@ -1,0 +1,45 @@
+extends /layouts/default
+
+block content
+  .container
+    .panel-group#messages
+      each message, i in thread.emailMessages
+        .panel.panel-default
+          .panel-heading
+            h4.panel-title
+              a(data-toggle="collapse", data-parent="#messages", href="#message" + i)
+                .email-message_preview
+                  .email-address
+                    img.email-address_avatar(src=message.from[0].gravatarUrl)
+                    span= message.from[0].address
+                  span.email-message_preview_content= message.content.replace('\n', '')
+          .panel-collapse.collapse(id="message" + i)
+            .panel-body
+              .pull-right
+                a.btn.btn-primary.btn-xs(href=message.w3url) view on w3.org
+              h3.email-message_subject= message.subject
+
+              .row
+                .col-md-3
+                  h4 From:
+                  each email in message.from
+                    .email-address
+                      img.email-address_avatar(src=email.gravatarUrl)
+                      span= email.address
+                  h4 Date:
+                  span= message.date
+                .col-md-9
+                  h4 To:
+                  each email in message.to
+                    .email-address
+                      img.email-address_avatar(src=email.gravatarUrl)
+                      span= email.address
+                  if !!message.cc
+                    h4 CC:
+                    each email in message.cc
+                      .email-address
+                        img.email-address_avatar(src=email.gravatarUrl)
+                        span= email.address
+
+              .email-message_body
+                pre= message.content
