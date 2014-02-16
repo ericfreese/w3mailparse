@@ -30,6 +30,6 @@ app.get('/:list([A-Za-z0-9\\-]+)/:period([A-Za-z0-9]+)/:message(\\d+).html', fun
 });
 
 
-app.listen();
+app.listen(process.env.PORT || 5000);
 
 
