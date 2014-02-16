@@ -1,7 +1,7 @@
 var express = require('express'),
-    // params = require('express-params'),
+    moment = require('moment'),
 
-    EmailThread = require('./models/email_thread');
+    EmailMessage = require('./models/email_message');
 
 var app = express();
 
@@ -22,13 +22,27 @@ app.get('/:id([A-Za-z]+)', function (req, res){
 
 app.get('/:list([A-Za-z0-9\\-]+)/:period([A-Za-z0-9]+)/:message(\\d+).html', function(req, res) {
   var url = 'http://lists.w3.org/Archives/Public/' + [ req.params.list, req.params.period, req.params.message ].join('/') + '.html',
-      num = req.query.n || 10;
+      depth = req.query.depth || 10;
 
-  EmailThread.buildMessageThread(url, num, function(emailThread) {
-    res.render('thread', { thread : emailThread });
+  EmailMessage.buildMessageTree(url, depth, function(rootMessage) {
+    res.render('thread', { rootMessage: rootMessage, moment: moment });
   });
 });
 
+// app.get('/:list([A-Za-z0-9\\-]+)/:period([A-Za-z0-9]+)/:message(\\d+).:type((html|json))', function(req, res) {
+//   var url = 'http://lists.w3.org/Archives/Public/' + [ req.params.list, req.params.period, req.params.message ].join('/') + '.html';
+
+//   EmailMessage.buildMessage(url, depth, function(message) {
+//     switch (type) {
+//       case 'html':
+//         res.render('thread', { message: message, moment: moment });
+//         break;
+//       case 'json':
+//         res.send(JSON.stringify(message));
+//     }
+//   });
+
+// });
 
 app.listen(process.env.PORT || 5000);
 

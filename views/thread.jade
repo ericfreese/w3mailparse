@@ -1,45 +1,56 @@
 extends /layouts/default
 
+mixin message(message, depth)
+  - depth = depth || 0
+  .email-message(class=(depth % 2 === 1 ? 'email-message-odd' : null))
+    .panel.panel-default
+      .panel-heading
+        h4.panel-title
+          a(data-toggle="collapse", href="#message" + message.id)
+            .row.email-message_preview
+              .col-md-3.col-sm-6.col-xs-6
+                .email-message_preview_email-address
+                  img.email-address_avatar(src=message.from[0].gravatarUrl)
+                  span= message.from[0].displayName || message.from[0].address
+              .col-md-6.hidden-sm.hidden-xs
+                .email-message_preview_content= message.content.replace('\n', '')
+              .col-md-3.col-sm-6.col-xs-6
+                .email-message_preview_time= moment(message.date).format("M/D/YY h:mm a")
+      .panel-collapse.collapse(id="message" + message.id)
+        .panel-body
+          .pull-right
+            a.btn.btn-primary.btn-xs(href=message.w3url) view on w3.org
+          h3.email-message_subject= message.subject
+
+          .row
+            .col-md-3
+              h4 From:
+              each email in message.from
+                .email-address
+                  img.email-address_avatar(src=email.gravatarUrl)
+                  span= email.displayName || email.address
+            .col-md-9
+              h4 To:
+              each email in message.to
+                .email-address
+                  img.email-address_avatar(src=email.gravatarUrl)
+                  span= email.displayName || email.address
+              if !!message.cc
+                h4 CC:
+                each email in message.cc
+                  .email-address
+                    img.email-address_avatar(src=email.gravatarUrl)
+                    span= email.displayName || email.address
+
+          .email-message_body
+            pre= message.content
+
+          if message.replies !== undefined
+            h4= message.replies.length + (message.replies.length > 1 ? ' Replies' : ' Reply')
+            each m in message.replies
+              +message(m, depth + 1)
+
 block content
   .container
-    .panel-group#messages
-      each message, i in thread.emailMessages
-        .panel.panel-default
-          .panel-heading
-            h4.panel-title
-              a(data-toggle="collapse", data-parent="#messages", href="#message" + i)
-                .email-message_preview
-                  .email-address
-                    img.email-address_avatar(src=message.from[0].gravatarUrl)
-                    span= message.from[0].address
-                  span.email-message_preview_content= message.content.replace('\n', '')
-          .panel-collapse.collapse(id="message" + i)
-            .panel-body
-              .pull-right
-                a.btn.btn-primary.btn-xs(href=message.w3url) view on w3.org
-              h3.email-message_subject= message.subject
-
-              .row
-                .col-md-3
-                  h4 From:
-                  each email in message.from
-                    .email-address
-                      img.email-address_avatar(src=email.gravatarUrl)
-                      span= email.address
-                  h4 Date:
-                  span= message.date
-                .col-md-9
-                  h4 To:
-                  each email in message.to
-                    .email-address
-                      img.email-address_avatar(src=email.gravatarUrl)
-                      span= email.address
-                  if !!message.cc
-                    h4 CC:
-                    each email in message.cc
-                      .email-address
-                        img.email-address_avatar(src=email.gravatarUrl)
-                        span= email.address
-
-              .email-message_body
-                pre= message.content
+    .panel-group
+      +message(rootMessage)

@@ -6,9 +6,9 @@
   "license": "MIT",
   "dependencies": {
     "express": "3.x",
-    "express-params": "~> 0.0.x",
     "jade": "1.1.x",
     "async": "0.2.x",
-    "cheerio": "0.13.x"
+    "cheerio": "0.13.x",
+    "moment": "2.5.x"
   }
 }

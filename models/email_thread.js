@@ -15,9 +15,9 @@ EmailThread.buildMessageThread = function(startAtUrl, maxMessages, callback) {
     function() { return numMessagesRetrieved < maxMessages && !!next},
     function(callback) {
       EmailMessage.buildFromUrl(next, function(emailMessage) {
-        emailThread.pushMessage(emailMessage);
+        emailThread.unshiftMessage(emailMessage);
 
-        next = !!emailMessage.nextInThread ? emailMessage.nextInThread.href : undefined;
+        next = !!emailMessage.inReplyTo ? emailMessage.inReplyTo.href : undefined;
         numMessagesRetrieved++;
 
         callback();

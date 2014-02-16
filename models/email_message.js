@@ -1,12 +1,14 @@
 var http = require('http'),
     url = require('url'),
     cheerio = require('cheerio'),
+    async = require('async'),
 
     EmailAddress = require('./email_address');
 
 var messageCache = {};
 
 var EmailMessage = function(attrs) {
+  this.id = attrs.id;
   this.w3url = attrs.w3url;
   this.subject = attrs.subject;
   this.to = attrs.to;
@@ -16,8 +18,7 @@ var EmailMessage = function(attrs) {
   this.content = attrs.content;
 };
 
-EmailMessage.buildFromUrl = function(w3url, callback) {
-
+EmailMessage.buildMessageTree = function(w3url, depth, callback) {
   if (!!messageCache[w3url]) {
     console.log('Cache hit for: ' + w3url);
     setImmediate(function() {
@@ -36,34 +37,22 @@ EmailMessage.buildFromUrl = function(w3url, callback) {
 
     res.on('end', function() {
       var $ = cheerio.load(responseBody),
-          $subject = $('.head > h1'),
-          $from = $('#from'),
-          $to = $('#to'),
           $cc = $('#cc'),
-          $date = $('#date'),
-          $messageId = $('#message-id'),
-          $body = $('#body'),
           $inReplyTo = $('a:contains("In reply to")'),
-          $nextInThread = $('a:contains("Next in thread")');
-
-      // Unwrap anchor tags in email address lists
-      $from.find('a').each(function() { $(this).replaceWith($(this).text()); });
-      $to.find('a').each(function() { $(this).replaceWith($(this).text()); });
-      $cc.find('a').each(function() { $(this).replaceWith($(this).text()); });
-
-      // Remove extra anchor tag in body
-      $body.find('a:first-child').remove();
+          $replies = $('a[title="Message sent in reply to this message"]');
 
       var emailMessage = new EmailMessage({
-        subject: $subject.text(),
-        from: EmailAddress.emailAddressesFromString($from.text()),
-        to: EmailAddress.emailAddressesFromString($to.text()),
-        date: $date.text().replace(/^[A-Za-z]+:/, ''),
-        content: $body.text(),
+        subject: $('.head > h1').text(),
+        from: EmailAddress.emailAddressesFromString($('#from').text()),
+        to: EmailAddress.emailAddressesFromString($('#to').text()),
+        date: new Date(Date.parse($('#date').text().replace(/^[A-Za-z]+:/, ''))),
+        content: $('#body').text(),
         w3url: w3url
       });
 
-      if ($cc.length > 0) {
+      emailMessage.id = w3url.match(/\/(\d+)\.html$/)[1];
+
+      if ($('#cc').length > 0) {
         emailMessage.cc = EmailAddress.emailAddressesFromString($cc.text());
       }
 
@@ -74,17 +63,22 @@ EmailMessage.buildFromUrl = function(w3url, callback) {
         };
       }
 
-      if ($nextInThread.length > 0) {
-        emailMessage.nextInThread = {
-          title: $nextInThread.attr('title'),
-          href: url.resolve(w3url, $nextInThread.attr('href'))
-        };
-      }
-
       messageCache[w3url] = emailMessage;
 
-      console.log('Finished.');
-      callback(emailMessage);
+      if (depth > 1 && $replies.length > 0) {
+        emailMessage.replies = [];
+
+        async.each($replies, function(reply, callback) {
+          EmailMessage.buildMessageTree(url.resolve(w3url, $(reply).attr('href')), depth - 1, function(replyMessage) {
+            emailMessage.replies.push(replyMessage);
+            callback();
+          });
+        }, function(err) {
+          callback(emailMessage);
+        });
+      } else {
+        callback(emailMessage);
+      }
     });
   });
 };

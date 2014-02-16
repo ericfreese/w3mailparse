@@ -3,25 +3,57 @@
   background: #eee;
 }*/
 
+.email-message {
+  min-width: 630px;
+}
+
+.email-message + .email-message {
+  margin-top: 10px;
+}
+
+.email-message pre {
+  background: none;
+  border: none;
+}
+
+.email-message .panel-default > .panel-heading {
+  background: none;
+}
+
+.email-message-odd > .panel {
+  background: #f6f6f6;
+}
+
 .email-message_preview {
+  line-height: 40px;
+}
+
+.email-message_preview_email-address,
+.email-message_preview_content,
+.email-message_preview_time {
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.email-message_preview_time {
+  text-align: right;
 }
 
 .email-message_preview_content {
   font-weight: normal;
   color: #999;
-  margin-left: 20px;
 }
 
 .email-address {
   display: inline-block;
   padding: 4px;
   line-height: 30px;
+  white-space: nowrap;
 }
 
 .email-address_avatar {
   max-height: 30px;
   vertical-align: middle;
-  margin-right: 3px;
+  margin-right: 6px;
 }

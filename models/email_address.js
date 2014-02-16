@@ -7,7 +7,7 @@ var EmailAddress = function(emailAddress) {
 
 EmailAddress.emailAddressesFromString = function(emailAddressString) {
   return emailAddressString.split(',').map(function(a) {
-    return new EmailAddress(a.replace(/^[A-Za-z]+:/, '').trim());
+    return new EmailAddress(a.replace(/^\s*[A-Za-z]+:/, '').trim());
   });
 }
 
