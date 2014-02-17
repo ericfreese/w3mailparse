@@ -1,10 +1,31 @@
+.container {
+  min-width: 640px;
+}
 
-/*.email-message:nth-child(even) {
-  background: #eee;
-}*/
+.navbar-default {
+  background: none;
+  border: none;
+}
 
-.email-message {
-  min-width: 630px;
+.jumbotron {
+  background: none;
+}
+
+.homepage-row {
+  margin-top: 39px;
+  border-top: 1px solid #eee;
+  padding-top: 39px;
+}
+
+.homepage-row:last-child {
+  padding-bottom: 39px;
+  border-bottom: 1px solid #eee;
+}
+
+footer {
+  text-align: center;
+  padding-top: 39px;
+  padding-bottom: 39px;
 }
 
 .email-message + .email-message {
@@ -56,4 +77,8 @@
   max-height: 30px;
   vertical-align: middle;
   margin-right: 6px;
+}
+
+.email-message_reply-link {
+  display: none;
 }

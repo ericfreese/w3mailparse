@@ -1,0 +1,32 @@
+extends /layouts/default
+
+block content
+  .container
+    .jumbotron.text-center
+      span.glyphicon.glyphicon-globe(style="font-size: 1000%;")
+      h1 Readable W3C Archives
+      h2
+        | The W3C keeps fantastic archives of their 
+        a(href="http://lists.w3.org/Archives/Public/") public email lists
+        | .
+      p.lead But they're painful to browse, so I made it a little easier.
+      p: a.btn.btn-primary.btn-lg(href="/try") Try it out
+
+  .container
+    .homepage-row.row
+      .col-sm-offset-3.col-sm-6.col-md-offset-4.col-md-4.text-center
+        h3 How to use it
+        p Take any publicly archived W3C email url and swap out <code>lists.w3.org</code> for <code>#{host}</code>.
+        p
+          | Scraped emails are also available in JSON format at <code>http://#{host}/m?url=[w3url]</code> 
+          a.btn.btn-default.btn-xs(href="/m?url=http://lists.w3.org/Archives/Public/www-style/2014Feb/0032.html") Example
+        p Source available <a href="https://github.com/ericfreese/w3mailparse">here</a>.
+    .homepage-row.text-center
+      h3 Recently viewed
+      if !!recentlyViewed && recentlyViewed.length > 0
+        each message in recentlyViewed
+          p: a(href=message.permalink)= message.subject
+      else
+        p Nothing to see here, folks.
+
+        
