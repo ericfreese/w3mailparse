@@ -13,15 +13,14 @@ block content
       p: a.btn.btn-primary.btn-lg(href="/try") Try it out
 
   .container
-    .homepage-row.row
-      .col-md-offset-3.col-md-6.text-center
+    .homepage-row
         h3 How to use it
         p Take any publicly archived W3C email url and swap out <code>lists.w3.org</code> for <code>#{host}</code>.
         p
           | Scraped emails are also available in JSON format at <code>http://#{host}/m?url=[w3url]</code> 
           a.btn.btn-default.btn-xs(href="/m?url=http://lists.w3.org/Archives/Public/www-style/2014Feb/0032.html") Example
         p Source available <a href="https://github.com/ericfreese/w3mailparse">here</a>.
-    .homepage-row.text-center
+    .homepage-row
       h3 Recently viewed
       if !!recentlyViewed && recentlyViewed.length > 0
         each message in recentlyViewed
